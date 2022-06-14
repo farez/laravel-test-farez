@@ -155,6 +155,15 @@ class NewSaleFormTest extends TestCase
     }
 
     /** @test */
+    public function message_shown_when_there_are_no_sales()
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(PreviousSales::class)
+            ->assertSee('No sale yet');
+    }
+
+    /** @test */
     public function sale_details_are_visible_on_sales_page()
     {
         $this->actingAs(User::factory()->create());
