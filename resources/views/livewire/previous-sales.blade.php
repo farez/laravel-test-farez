@@ -1,4 +1,4 @@
-<div class="w-3/4 mt-8">
+<div class="sm:w-3/4 mt-8">
     <h3 class="font-semibold text-lg text-gray-800 leading-tight">{{ __('Previous sales') }}</h3>
         <table class="min-w-full divide-y divide-gray-200 mt-4 border border-gray-200">
             <thead class="bg-gray-50">

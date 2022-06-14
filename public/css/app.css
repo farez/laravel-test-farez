@@ -1510,6 +1510,10 @@ select {
     height: 5rem;
   }
 
+  .sm\:w-3\/4 {
+    width: 75%;
+  }
+
   .sm\:max-w-md {
     max-width: 28rem;
   }

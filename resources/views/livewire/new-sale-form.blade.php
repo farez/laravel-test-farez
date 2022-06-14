@@ -1,4 +1,4 @@
-<div class="w-3/4">
+<div class="sm:w-3/4">
     <form wire:submit.prevent="createSale">
         <div class="grid grid-cols-4 gap-4 align-baseline">
             <div>
