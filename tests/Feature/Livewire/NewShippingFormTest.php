@@ -79,15 +79,6 @@ class NewShippingFormTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $product = 'gold_coffee';
-        $productLabel = config('coffee.products.gold_coffee.label');
-        $quantity = 3;
-        $unitCost = 5.50;
-        $cost = $quantity * $unitCost;
-        $profitMargin = config('coffee.products.gold_coffee.margin');
-        $shippingCost = config('coffee.shipping_cost');
-        $sellingPrice = ($cost / (1 - $profitMargin)) + $shippingCost;
-
         Livewire::test(NewShippingForm::class, [
             'shippingCost' => 12.50,
         ])->call('createShippingCharge');
