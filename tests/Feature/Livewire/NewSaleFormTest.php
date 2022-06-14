@@ -47,4 +47,12 @@ class NewSaleFormTest extends TestCase
         Livewire::actingAs(User::factory()->create());
         $this->get(route('coffee.sales'))->assertSeeLivewire('previous-sales');
     }
+
+    /** @test */
+    public function selling_price_is_calculated_and_displayed_correctly()
+    {
+        Livewire::test(NewSaleForm::class, ['quantity' => 3, 'unitCost' => '5.50'])
+            ->assertSet('sellingPrice', 16.50)
+            ->assertSee('16.50');
+    }
 }
