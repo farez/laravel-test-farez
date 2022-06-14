@@ -51,4 +51,24 @@ class NewShippingFormTest extends TestCase
             ->call('createShippingCharge')
             ->assertHasErrors(['shippingCost' => 'required']);
     }
+
+    /** @test  */
+    function cost_is_numeric()
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(NewShippingForm::class, ['shippingCost' => 'abc'])
+            ->call('createShippingCharge')
+            ->assertHasErrors(['shippingCost' => 'numeric']);
+    }
+
+    /** @test  */
+    function cost_is_greater_than_0()
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(NewShippingForm::class, ['shippingCost' => 0.00])
+            ->call('createShippingCharge')
+            ->assertHasErrors(['shippingCost' => 'gt:0']);
+    }
 }
