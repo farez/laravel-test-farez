@@ -9,12 +9,6 @@ class NewSaleForm extends Component
     public $quantity;
     public $unitCost;
 
-    public function mount()
-    {
-        $this->quantity;
-        $this->unitCost;
-    }
-
     public function render()
     {
         return view('livewire.new-sale-form');
