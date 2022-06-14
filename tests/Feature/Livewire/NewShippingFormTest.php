@@ -4,9 +4,11 @@ namespace Tests\Feature\Livewire;
 
 use App\Http\Livewire\NewSaleForm;
 use App\Http\Livewire\NewShippingForm;
+use App\Models\ShippingCharge;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -70,5 +72,27 @@ class NewShippingFormTest extends TestCase
         Livewire::test(NewShippingForm::class, ['shippingCost' => 0.00])
             ->call('createShippingCharge')
             ->assertHasErrors(['shippingCost' => 'gt:0']);
+    }
+
+    /** @test  */
+    function can_create_active_shipping_cost()
+    {
+        $this->actingAs(User::factory()->create());
+
+        $product = 'gold_coffee';
+        $productLabel = config('coffee.products.gold_coffee.label');
+        $quantity = 3;
+        $unitCost = 5.50;
+        $cost = $quantity * $unitCost;
+        $profitMargin = config('coffee.products.gold_coffee.margin');
+        $shippingCost = config('coffee.shipping_cost');
+        $sellingPrice = ($cost / (1 - $profitMargin)) + $shippingCost;
+
+        Livewire::test(NewShippingForm::class, [
+            'shippingCost' => 12.50,
+        ])->call('createShippingCharge');
+        $latestCost = ShippingCharge::orderByDesc('created_date')->first();
+
+        $this->assertTrue($latestCost->cost == 12.50);
     }
 }
