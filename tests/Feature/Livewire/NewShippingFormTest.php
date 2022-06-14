@@ -86,4 +86,14 @@ class NewShippingFormTest extends TestCase
 
         $this->assertTrue($latestCost->cost == 12.50);
     }
+
+    /** @test  */
+    function can_see_shipping_cost_on_shipping_page()
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(NewShippingForm::class, ['shippingCost' => 12.50,])
+            ->call('createShippingCharge')
+            ->assertSee(12.50);
+    }
 }
