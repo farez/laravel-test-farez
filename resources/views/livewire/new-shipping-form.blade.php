@@ -1,21 +1,23 @@
 <div class="sm:w-3/4">
-    <form wire:submit.prevent="createShippingCharge" class="flex flex-col sm:w-1/4">
+    <form wire:submit.prevent="createShippingCharge">
         @csrf
-        <div>
-            <label for="shippingCost" class="block text-sm font-medium text-gray-700"> {{ __('New cost of shipment') }} </label>
-            <div class="mt-1">
-                <input wire:model="shippingCost" type="text" name="shippingCost" id="shippingCost" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+        <div class="grid grid-cols-3 gap-4 align-baseline">
+            <div>
+                <label for="shippingCost" class="block text-sm font-medium text-gray-700"> {{ __('New cost of shipment') }} </label>
+                <div class="mt-1">
+                    <input wire:model="shippingCost" type="text" name="shippingCost" id="shippingCost" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                </div>
             </div>
-            @error('shippingCost') <span class="text-red-700">{{ $message }}</span> @enderror
+            <div class="flex flex-col mt-auto">
+                <button wire:loading.remove wire:target="createShippingCharge" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">{{ __('Set new price') }}</button>
+                <button wire:loading wire:target="createShippingCharge" disabled class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600">{{ __('Saving...') }}</button>
+            </div>
         </div>
-        <div class="mt-2">
-            <button wire:loading.remove wire:target="createShippingCharge" type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">{{ __('Set new price') }}</button>
-            <button wire:loading wire:target="createShippingCharge" disabled class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600">{{ __('Saving...') }}</button>
-        </div>
+        @error('shippingCost') <span class="text-red-700">{{ $message }}</span> @enderror
     </form>
 
-
-    <table class="min-w-full divide-y divide-gray-200 mt-8 border border-gray-200">
+    <h3 class="font-semibold text-lg text-gray-800 leading-tight mt-8">{{ __('Log of Shipment costs') }}</h3>
+    <table class="min-w-full divide-y divide-gray-200 mt-4 border border-gray-200">
         <thead class="bg-gray-50">
             <tr class="text-xs text-gray-500 uppercase tracking-wider">
                 <th scope="col" class="px-6 py-3 font-medium text-left">{{ __('Shipment Cost') }}</th>
