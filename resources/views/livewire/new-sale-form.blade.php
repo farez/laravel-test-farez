@@ -1,4 +1,4 @@
-<div>
+<div class="w-3/4">
     <form wire:submit.prevent="createSale">
         <div class="grid grid-cols-4 gap-4 align-baseline">
             <div>
@@ -23,7 +23,8 @@
                 </div>
             </div>
             <div class="flex flex-col mt-auto">
-                <button type="submit"  class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">{{ __('Record sale') }}</button>
+                <button wire:loading.remove wire:target="createSale" type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">{{ __('Record sale') }}</button>
+                <button wire:loading wire:target="createSale" disabled class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600">{{ __('Saving...') }}</button>
             </div>
         </div>
     </form>
