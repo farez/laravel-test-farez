@@ -51,8 +51,13 @@ class NewSaleFormTest extends TestCase
     /** @test */
     public function selling_price_is_calculated_and_displayed_correctly()
     {
-        Livewire::test(NewSaleForm::class, ['quantity' => 3, 'unitCost' => '5.50'])
-            ->assertSet('sellingPrice', 16.50)
-            ->assertSee('16.50');
+        $quantity = 3;
+        $unitCost = 5.50;
+        $cost = $quantity * $unitCost;
+        $sellingPrice = ($cost / (1 - config('coffee.profit_margin'))) + config('coffee.shipping_cost', 10.00);
+
+        Livewire::test(NewSaleForm::class, ['quantity' => $quantity, 'unitCost' => $unitCost])
+            ->assertSet('sellingPrice', $sellingPrice)
+            ->assertSee($sellingPrice);
     }
 }
