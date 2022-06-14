@@ -123,4 +123,28 @@ class NewShippingFormTest extends TestCase
         $this->assertTrue($latestSale['shipping_cost'] == 12.50);
     }
 
+    /** @test  */
+    function new_sale_increments_number_of_sales()
+    {
+        $this->actingAs(User::factory()->create());
+
+        // Create the shipping charge
+        Livewire::test(NewShippingForm::class, ['shippingCost' => 12.50,])
+            ->call('createShippingCharge');
+
+        // Create the sale
+        $product = 'gold_coffee';
+        $quantity = 3;
+        $unitCost = 5.50;
+        Livewire::test(NewSaleForm::class, [
+            'product' => $product,
+            'quantity' => $quantity,
+            'unitCost' => $unitCost,
+        ])->call('createSale');
+
+        // Get the latest sale
+        $latestCost = ShippingCharge::orderByDesc('created_date')->first();
+
+        $this->assertTrue($latestCost->number_of_sales == 1);
+    }
 }

@@ -63,6 +63,10 @@ class NewSaleForm extends Component
             'selling_price' => $this->getSellingPriceProperty(),
         ]);
 
+        // Increment the number of sales for this shipping cost.
+        $this->shippingCost->number_of_sales = $this->shippingCost->number_of_sales + 1;
+        $this->shippingCost->save();
+
         $this->emit('new_sale_created');
     }
 
