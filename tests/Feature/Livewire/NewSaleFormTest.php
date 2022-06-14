@@ -4,12 +4,10 @@ namespace Tests\Feature\Livewire;
 
 use App\Http\Livewire\NewSaleForm;
 use App\Http\Livewire\PreviousSales;
-use App\Models\Sale;
 use App\Models\ShippingCharge;
 use App\Models\User;
 use Database\Seeders\ShippingChargeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
