@@ -46,5 +46,7 @@ class NewSaleForm extends Component
             'shipping_cost' => config('coffee.shipping_cost'),
             'selling_price' => $this->getSellingPriceProperty(),
         ]);
+
+        $this->emit('new_sale_created');
     }
 }
