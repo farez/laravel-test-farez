@@ -27,7 +27,7 @@ class NewSaleForm extends Component
             $this->productSelectOptions[$productId] = $productData['label'];
         }
 
-        $this->shippingCost = ShippingCharge::orderByDesc('created_date')->firstOrFail();
+        $this->shippingCost = ShippingCharge::orderByDesc('created_at')->firstOrFail();
     }
 
     public function render()
