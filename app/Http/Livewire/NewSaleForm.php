@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\ShippingCharge;
 use Livewire\Component;
 
 class NewSaleForm extends Component
@@ -11,6 +12,7 @@ class NewSaleForm extends Component
     public $products;
     public $product = 'gold_coffee'; // Default to Gold coffee in the form.
     public $productSelectOptions; // Product options for the form.
+    public $shippingCost;
 
     protected $rules = [
         'quantity' => 'required|numeric|integer|gt:0',
@@ -24,6 +26,8 @@ class NewSaleForm extends Component
         foreach ($this->products as $productId => $productData) {
             $this->productSelectOptions[$productId] = $productData['label'];
         }
+
+        $this->shippingCost = ShippingCharge::orderByDesc('created_date')->firstOrFail();
     }
 
     public function render()
@@ -42,7 +46,7 @@ class NewSaleForm extends Component
         if ($cost <= 0) {
             return 0.00;
         }
-        $sellingPrice = ($cost / (1 - $this->getMargin($this->product))) + config('coffee.shipping_cost');
+        $sellingPrice = ($cost / (1 - $this->getMargin($this->product))) + $this->shippingCost->cost;
         return $sellingPrice;
     }
 
@@ -55,7 +59,7 @@ class NewSaleForm extends Component
             'quantity' => $this->quantity,
             'unit_cost' => $this->unitCost,
             'profit_margin' => $this->getMargin($this->product),
-            'shipping_cost' => config('coffee.shipping_cost'),
+            'shipping_cost' => $this->shippingCost->cost,
             'selling_price' => $this->getSellingPriceProperty(),
         ]);
 
