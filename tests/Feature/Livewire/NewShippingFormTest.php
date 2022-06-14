@@ -34,4 +34,10 @@ class NewShippingFormTest extends TestCase
         $this->actingAs(User::factory()->create());
         $this->get(route('shipping.partners'))->assertOk();
     }
+
+    /** @test */
+    public function shipping_page_not_visible_publicly()
+    {
+        $this->get(route('shipping.partners'))->assertSee('login');
+    }
 }
