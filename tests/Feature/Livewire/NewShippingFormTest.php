@@ -27,4 +27,11 @@ class NewShippingFormTest extends TestCase
         $this->actingAs(User::factory()->create());
         $this->get(route('shipping.partners'))->assertSeeLivewire('new-shipping-form');
     }
+
+    /** @test */
+    public function shipping_page_visible_to_authenticated_user()
+    {
+        $this->actingAs(User::factory()->create());
+        $this->get(route('shipping.partners'))->assertOk();
+    }
 }
