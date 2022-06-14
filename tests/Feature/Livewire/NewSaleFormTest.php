@@ -41,4 +41,10 @@ class NewSaleFormTest extends TestCase
         $this->get(route('coffee.sales'))->assertSee('login');
     }
 
+    /** @test */
+    public function sales_page_contains_previous_sales_component()
+    {
+        Livewire::actingAs(User::factory()->create());
+        $this->get(route('coffee.sales'))->assertSeeLivewire('previous-sales');
+    }
 }
