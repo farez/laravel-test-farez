@@ -17,7 +17,7 @@ class NewSaleForm extends Component
     public function getSellingPriceProperty()
     {
         $cost = $this->quantity * $this->unitCost;
-        $sellingPrice = ($cost / (1 - config('coffee.profit_margin'))) + config('coffee.shipping_cost', 10.00);
+        $sellingPrice = ($cost / (1 - config('coffee.profit_margin'))) + config('coffee.shipping_cost');
         return $sellingPrice;
     }
 }
