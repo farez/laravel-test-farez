@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Livewire;
 
+use App\Http\Livewire\NewSaleForm;
 use App\Http\Livewire\NewShippingForm;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,5 +40,15 @@ class NewShippingFormTest extends TestCase
     public function shipping_page_not_visible_publicly()
     {
         $this->get(route('shipping.partners'))->assertSee('login');
+    }
+
+    /** @test  */
+    function cost_is_required()
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(NewShippingForm::class, ['shippingCost' => ''])
+            ->call('createShippingCharge')
+            ->assertHasErrors(['shippingCost' => 'required']);
     }
 }
