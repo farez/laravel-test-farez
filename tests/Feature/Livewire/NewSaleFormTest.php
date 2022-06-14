@@ -112,15 +112,26 @@ class NewSaleFormTest extends TestCase
     }
 
     /** @test  */
+    function product_is_required()
+    {
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(NewSaleForm::class, ['product' => ''])
+            ->call('createSale')
+            ->assertHasErrors(['product' => 'required']);
+    }
+
+    /** @test  */
     function can_create_sale()
     {
         $this->actingAs(User::factory()->create());
 
-        $product = 'Gold coffee';
+        $product = 'gold_coffee';
+        $productLabel = config('coffee.products.gold_coffee.label');
         $quantity = 3;
         $unitCost = 5.50;
         $cost = $quantity * $unitCost;
-        $profitMargin = config('coffee.profit_margin');
+        $profitMargin = config('coffee.products.gold_coffee.margin');
         $shippingCost = config('coffee.shipping_cost');
         $sellingPrice = ($cost / (1 - $profitMargin)) + $shippingCost;
 
@@ -134,7 +145,7 @@ class NewSaleFormTest extends TestCase
         ])->call('createSale');
 
         $this->assertTrue(DB::table('sales')
-            ->where('product', '=', $product)
+            ->where('product', '=', $productLabel)
             ->where('quantity', '=', $quantity)
             ->where('unit_cost', '=', $unitCost)
             ->where('profit_margin', '=', $profitMargin)
@@ -168,15 +179,16 @@ class NewSaleFormTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $product = 'Gold coffee';
+        $product = 'gold_coffee';
+        $product_label = config('products.gold_coffee.label');
         $quantity = 3;
         $unitCost = 5.50;
         $cost = $quantity * $unitCost;
-        $profitMargin = config('coffee.profit_margin');
+        $profitMargin = config('coffee.products.gold_coffee.margin');
         $shippingCost = config('coffee.shipping_cost');
         $sellingPrice = ($cost / (1 - $profitMargin)) + $shippingCost;
 
-        Livewire::test(NewSaleForm::class, [
+        $result = Livewire::test(NewSaleForm::class, [
             'product' => $product,
             'quantity' => $quantity,
             'unitCost' => $unitCost,
@@ -186,6 +198,7 @@ class NewSaleFormTest extends TestCase
         ])->call('createSale');
 
         Livewire::test(PreviousSales::class)
+            ->assertSee($product_label)
             ->assertSee($quantity)
             ->assertSee($unitCost)
             ->assertSee($sellingPrice);
