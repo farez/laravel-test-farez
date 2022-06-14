@@ -15,7 +15,8 @@ class NewShippingForm extends Component
 
     public function render()
     {
-        return view('livewire.new-shipping-form');
+        $costs = ShippingCharge::orderByDesc('created_at')->get();
+        return view('livewire.new-shipping-form', compact('costs'));
     }
 
     public function createShippingCharge()

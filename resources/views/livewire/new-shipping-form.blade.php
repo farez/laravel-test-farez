@@ -1,5 +1,6 @@
 <div class="sm:w-3/4">
     <form wire:submit.prevent="createShippingCharge" class="flex flex-col sm:w-1/4">
+        @csrf
         <div>
             <label for="shippingCost" class="block text-sm font-medium text-gray-700"> {{ __('New cost of shipment') }} </label>
             <div class="mt-1">
@@ -12,4 +13,46 @@
             <button wire:loading wire:target="createShippingCharge" disabled class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600">{{ __('Saving...') }}</button>
         </div>
     </form>
+
+
+    <table class="min-w-full divide-y divide-gray-200 mt-8 border border-gray-200">
+        <thead class="bg-gray-50">
+            <tr class="text-xs text-gray-500 uppercase tracking-wider">
+                <th scope="col" class="px-6 py-3 font-medium text-left">{{ __('Shipment Cost') }}</th>
+                <th scope="col" class="px-6 py-3 font-medium text-left">{{ __('Active') }}</th>
+                <th scope="col" class="px-6 py-3 font-medium text-left">{{ __('Set at') }}</th>
+                <th scope="col" class="px-6 py-3 font-medium text-left">{{ __('Number of sales') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if($costs->isNotEmpty())
+                @foreach($costs as $cost)
+                    <tr class="{{ $loop->odd? 'bg-white' : 'bg-gray-50'}}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-left">
+                            {{ number_format($cost->cost, 2) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-left">
+                            @if($loop->first)
+                                {{ __('Yes') }}
+                            @else
+                                {{ __('No') }}
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-left">
+                            {{ $cost->created_at }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-left">
+                            {{ $cost->number_of_sales }}
+                        </td>
+                    </tr>
+                @endforeach
+            @else
+                <tr>
+                    <td colspan="4" class="p-4">
+                        {{ __('No shipping charges have been set yet.') }}
+                    </td>
+                </tr>
+            @endif
+        </tbody>
+    </table>
 </div>
