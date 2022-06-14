@@ -1,5 +1,6 @@
 <div class="sm:w-3/4">
     <form wire:submit.prevent="createSale">
+        @csrf
         <div class="grid grid-cols-5 gap-4 align-baseline">
             <div>
                 <label for="product" class="block text-sm font-medium text-gray-700"> {{ __('Product') }} </label>
