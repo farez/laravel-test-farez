@@ -5,7 +5,9 @@ namespace Tests\Feature\Livewire;
 use App\Http\Livewire\NewSaleForm;
 use App\Http\Livewire\PreviousSales;
 use App\Models\Sale;
+use App\Models\ShippingCharge;
 use App\Models\User;
+use Database\Seeders\ShippingChargeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +25,7 @@ class NewSaleFormTest extends TestCase
     /** @test */
     public function the_component_can_render()
     {
+        $this->seed(ShippingChargeSeeder::class);
         $component = Livewire::test(NewSaleForm::class);
 
         $component->assertStatus(200);
@@ -32,6 +35,7 @@ class NewSaleFormTest extends TestCase
     public function sales_page_contains_new_sale_form_component()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
         $this->get(route('coffee.sales'))->assertSeeLivewire('new-sale-form');
     }
 
@@ -39,6 +43,7 @@ class NewSaleFormTest extends TestCase
     public function sales_page_visible_to_authenticated_user()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
         $this->get(route('coffee.sales'))->assertOk();
     }
 
@@ -51,12 +56,22 @@ class NewSaleFormTest extends TestCase
     /** @test */
     public function selling_price_is_calculated_and_displayed_correctly()
     {
+        $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
+
+        $product = 'gold_coffee';
         $quantity = 3;
         $unitCost = 5.50;
         $cost = $quantity * $unitCost;
-        $sellingPrice = ($cost / (1 - config('coffee.profit_margin'))) + config('coffee.shipping_cost');
 
-        Livewire::test(NewSaleForm::class, ['quantity' => $quantity, 'unitCost' => $unitCost])
+        $latestShippingCost = ShippingCharge::orderByDesc('created_date')->first();
+        $shipping = $latestShippingCost->cost;
+
+        $sellingPrice = ($cost / (1 - config('coffee.products.gold_coffee.margin'))) + $shipping;
+
+        Livewire::test(NewSaleForm::class, [
+            'product' => $product, 'quantity' => $quantity, 'unitCost' => $unitCost
+        ])
             ->assertSet('sellingPrice', $sellingPrice)
             ->assertSee($sellingPrice);
     }
@@ -65,6 +80,7 @@ class NewSaleFormTest extends TestCase
     function quantity_is_required()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         Livewire::test(NewSaleForm::class, ['quantity' => ''])
             ->call('createSale')
@@ -75,6 +91,7 @@ class NewSaleFormTest extends TestCase
     function quantity_is_integer()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         Livewire::test(NewSaleForm::class, ['quantity' => 0.1])
             ->call('createSale')
@@ -85,6 +102,7 @@ class NewSaleFormTest extends TestCase
     function quantity_is_greater_than_zero()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         Livewire::test(NewSaleForm::class, ['quantity' => 0])
             ->call('createSale')
@@ -95,6 +113,7 @@ class NewSaleFormTest extends TestCase
     function unitCost_is_required()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         Livewire::test(NewSaleForm::class, ['unitCost' => ''])
             ->call('createSale')
@@ -105,6 +124,7 @@ class NewSaleFormTest extends TestCase
     function unit_cost_is_greater_than_zero_point_one()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         Livewire::test(NewSaleForm::class, ['unitCost' => 0.05])
             ->call('createSale')
@@ -115,6 +135,7 @@ class NewSaleFormTest extends TestCase
     function product_is_required()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         Livewire::test(NewSaleForm::class, ['product' => ''])
             ->call('createSale')
@@ -125,6 +146,9 @@ class NewSaleFormTest extends TestCase
     function can_create_sale()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
+
+        $latestShippingCost = ShippingCharge::orderByDesc('created_date')->first();
 
         $product = 'gold_coffee';
         $productLabel = config('coffee.products.gold_coffee.label');
@@ -132,16 +156,13 @@ class NewSaleFormTest extends TestCase
         $unitCost = 5.50;
         $cost = $quantity * $unitCost;
         $profitMargin = config('coffee.products.gold_coffee.margin');
-        $shippingCost = config('coffee.shipping_cost');
+        $shippingCost = $latestShippingCost->cost;
         $sellingPrice = ($cost / (1 - $profitMargin)) + $shippingCost;
 
         Livewire::test(NewSaleForm::class, [
             'product' => $product,
             'quantity' => $quantity,
             'unitCost' => $unitCost,
-            'profit_margin' => $profitMargin,
-            'shipping_cost' => $shippingCost,
-            'selling_price' => $sellingPrice,
         ])->call('createSale');
 
         $this->assertTrue(DB::table('sales')
@@ -162,6 +183,7 @@ class NewSaleFormTest extends TestCase
     public function sales_page_contains_previous_sales_component()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
         $this->get(route('coffee.sales'))->assertSeeLivewire('previous-sales');
     }
 
@@ -178,6 +200,7 @@ class NewSaleFormTest extends TestCase
     public function sale_details_are_visible_on_sales_page()
     {
         $this->actingAs(User::factory()->create());
+        $this->seed(ShippingChargeSeeder::class);
 
         $product = 'gold_coffee';
         $product_label = config('products.gold_coffee.label');
@@ -192,15 +215,11 @@ class NewSaleFormTest extends TestCase
             'product' => $product,
             'quantity' => $quantity,
             'unitCost' => $unitCost,
-            'profit_margin' => $profitMargin,
-            'shipping_cost' => $shippingCost,
-            'selling_price' => $sellingPrice,
         ])->call('createSale');
 
         Livewire::test(PreviousSales::class)
             ->assertSee($product_label)
             ->assertSee($quantity)
-            ->assertSee($unitCost)
-            ->assertSee($sellingPrice);
+            ->assertSee($unitCost);
     }
 }
