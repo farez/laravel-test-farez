@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire;
 
 use App\Http\Livewire\NewSaleForm;
 use App\Http\Livewire\NewShippingForm;
+use App\Models\Sale;
 use App\Models\ShippingCharge;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -96,4 +97,30 @@ class NewShippingFormTest extends TestCase
             ->call('createShippingCharge')
             ->assertSee(12.50);
     }
+
+    /** @test  */
+    function new_sale_uses_latest_shipping_cost()
+    {
+        $this->actingAs(User::factory()->create());
+
+        // Create the shipping charge
+        Livewire::test(NewShippingForm::class, ['shippingCost' => 12.50,])
+            ->call('createShippingCharge');
+
+        // Create the sale
+        $product = 'gold_coffee';
+        $quantity = 3;
+        $unitCost = 5.50;
+        Livewire::test(NewSaleForm::class, [
+            'product' => $product,
+            'quantity' => $quantity,
+            'unitCost' => $unitCost,
+        ])->call('createSale');
+
+        // Get the latest sale
+        $latestSale = Sale::orderByDesc('created_date')->first();
+
+        $this->assertTrue($latestSale['shipping_cost'] == 12.50);
+    }
+
 }
