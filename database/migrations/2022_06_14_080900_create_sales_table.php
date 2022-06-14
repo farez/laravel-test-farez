@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('product');
             $table->foreignId('user_id')->constrained();
             $table->integer('quantity');
             $table->float('unit_cost');
